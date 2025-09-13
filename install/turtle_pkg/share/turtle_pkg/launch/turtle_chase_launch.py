@@ -8,11 +8,13 @@ def generate_launch_description():
             package='turtlesim',
             executable='turtlesim_node',
             name='sim',
+            output='screen',
         )
     turtle_chase_node=Node(
             package='turtle_pkg',
             executable='turtle_chase',
             name='turtle',
+            output='screen',
         )
     
     ld.add_action(turtlesim_node)

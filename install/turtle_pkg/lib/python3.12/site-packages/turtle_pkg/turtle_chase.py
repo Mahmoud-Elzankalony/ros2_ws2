@@ -19,7 +19,7 @@ class TurtleChase(Node):
         self.score=0
         
         for i in range(0,3) :
-            self.spawn_enemy("enemey" + str(i+1))
+            self.spawn_enemy("enemy" + str(i+1))
         self.subscription = self.create_subscription(
             Pose,
             '/turtle1/pose',
@@ -28,26 +28,26 @@ class TurtleChase(Node):
         
 
 
-        self.subscription_enemey1 = self.create_subscription(
+        self.subscription_enemy1 = self.create_subscription(
             Pose,
-            '/enemey1/pose',
-            partial(self.enemy_callback,name = 'enemey1'),
+            '/enemy1/pose',
+            partial(self.enemy_callback,name = 'enemy1'),
             10)
         
-        self.subscription_enemey2 = self.create_subscription(
+        self.subscription_enemy2 = self.create_subscription(
             Pose,
-            '/enemey2/pose',
-            partial(self.enemy_callback,name = 'enemey2'),
+            '/enemy2/pose',
+            partial(self.enemy_callback,name = 'enemy2'),
             10)
         
-        self.subscription_enemey3 = self.create_subscription(
+        self.subscription_enemy3 = self.create_subscription(
             Pose,
-            '/enemey3/pose',
-            partial(self.enemy_callback,name = 'enemey3'),
+            '/enemy3/pose',
+            partial(self.enemy_callback,name = 'enemy3'),
             10)
         self.publisher_ = self.create_publisher(Int32, '/score', 10)
         self.score_callback()
-        self.create_timer(0.25,self.check_collisions)
+        self.create_timer(0.1,self.check_collisions)
 
 
     def spawn_enemy(self,name):
@@ -87,6 +87,7 @@ class TurtleChase(Node):
         try:
             response=future.result()
             self.enemy_positions.pop(name)
+            self.get_logger().info(f"{name} was hit! Score = {self.score}")
             self.spawn_enemy(name)
         except Exception as e:
             self.get_logger().error("Service call failed: %r" %(e,))
@@ -112,10 +113,9 @@ class TurtleChase(Node):
         for name, pose in list(self.enemy_positions.items()):
             dist=find_distance(pose,self.msg)
             if(dist < 0.5) :
-                self.call_service_Kill(name)
                 self.score+=1
+                self.call_service_Kill(name)
                 self.score_callback()
-
 
 
 

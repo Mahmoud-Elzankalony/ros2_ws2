@@ -87,6 +87,7 @@ class TurtleChase(Node):
         try:
             response=future.result()
             self.enemy_positions.pop(name)
+            self.get_logger().info(f"{name} was hit! Score = {self.score}")
             self.spawn_enemy(name)
         except Exception as e:
             self.get_logger().error("Service call failed: %r" %(e,))
@@ -112,10 +113,9 @@ class TurtleChase(Node):
         for name, pose in list(self.enemy_positions.items()):
             dist=find_distance(pose,self.msg)
             if(dist < 0.5) :
-                self.call_service_Kill(name)
                 self.score+=1
+                self.call_service_Kill(name)
                 self.score_callback()
-
 
 
 
